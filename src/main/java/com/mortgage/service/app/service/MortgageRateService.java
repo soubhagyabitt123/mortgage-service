@@ -8,7 +8,7 @@ import com.mortgage.service.app.repository.MortgageRateRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import jakarta.annotation.PostConstruct;
 
 @Service
 public class MortgageRateService {
@@ -18,7 +18,18 @@ public class MortgageRateService {
     public MortgageRateService(MortgageRateRepository repository) {
         this.mortgageRateRepository = repository;
     }
-
+	
+    //Insert some default values in DB inorder to retrieve it.
+    @PostConstruct
+    public void insertDefaultMortgageRates() {
+        if (mortgageRateRepository.count() == 0) {  // Insert only if DB is empty
+            mortgageRateRepository.saveAll(List.of(
+                new MortgageRate(null, 15, 3.5, LocalDateTime.now()),
+                new MortgageRate(null, 30, 4.2, LocalDateTime.now())
+            ));
+        }
+    }
+	
     /**
      * 
      * @return List of all current interest rates
